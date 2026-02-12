@@ -18,6 +18,7 @@ class DownloaderService(page_downloader_pb2_grpc.PageDownloaderServicer):
         browser_config = BrowserConfig(headless=self.settings.browser.headless,
                                     verbose=self.settings.browser.verbose)
         run_config = CrawlerRunConfig(
+                        capture_mhtml=self.settings.crawler.capture_mhtml,
                         screenshot=self.settings.crawler.screenshot,
                         pdf=self.settings.crawler.pdf,
                         cache_mode=CacheMode[self.settings.crawler.cache_mode],
@@ -25,8 +26,7 @@ class DownloaderService(page_downloader_pb2_grpc.PageDownloaderServicer):
                         wait_for_images=self.settings.crawler.wait_for_images
                     )
         config = CrawlArchiverConfig(browser_config=browser_config,
-                                    run_config=run_config,
-                                    make_local_html=self.settings.crawler.make_local_html)
+                                    run_config=run_config)
         archiver = CrawlArchiver(config=config,
                                 writer=zip_content_writer)
 

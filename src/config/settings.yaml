@@ -5,8 +5,8 @@ browser:
   verbose: false
 crawler:
   cache_mode: "BYPASS"
-  make_local_html: true
+  capture_mhtml: true
   screenshot: false
   pdf: false
-  wait_for_images: false
+  wait_for_images: true
   verbose: false
