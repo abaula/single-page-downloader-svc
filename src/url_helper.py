@@ -3,9 +3,9 @@ import os.path
 
 class UrlParser:
     """
-    Класс для разбора URL на компоненты:
-    схема, домен, путь, имя файла, имя без расширения и расширение.
-    Игнорирует параметры запроса (?...) и фрагмент (#...).
+    A class for parsing URLs into their components:
+    scheme, domain, path, filename, name without extension, and extension.
+    Ignores query parameters (?...) and fragments (#...).
     """
     def __init__(self, url):
         self.url = url
@@ -15,31 +15,31 @@ class UrlParser:
         self.name, self.extension = os.path.splitext(self.filename)
 
     def get_scheme(self):
-        """Схема (http/https и т.д.)"""
+        """Scheme (http/https, etc.)"""
         return self.parsed.scheme
 
     def get_netloc(self):
-        """Домен/хост (netloc)"""
+        """Domain/host (netloc)"""
         return self.parsed.netloc
 
     def get_path(self):
-        """Путь к файлу"""
+        """File path"""
         return self.path
 
     def get_filename(self):
-        """Полное имя файла с расширением"""
+        """Full file name with extension"""
         return self.filename
 
     def get_name(self):
-        """Имя файла без расширения"""
+        """File name without extension"""
         return self.name
 
     def get_extension(self):
-        """Расширение файла (с точкой, напр. '.jpg')"""
+        """File extension (with a period, e.g. 'jpg')"""
         return self.extension
 
     def to_dict(self):
-        """Все компоненты в словаре"""
+        """All components in the dictionary"""
         return {
             'scheme': self.get_scheme(),
             'netloc': self.get_netloc(),
@@ -51,30 +51,29 @@ class UrlParser:
 
 class UrlJoiner:
     """
-    Класс для формирования полного URL из базового и относительной ссылки.
-    Использует urllib.parse.urljoin для корректной обработки всех случаев:
-    - относительные пути (img.jpg, ../img.jpg)
-    - абсолютные пути (/img.jpg)
-    - с параметрами и фрагментами.
+    A class for forming a full URL from a base and a relative link.
+    Uses urllib.parse.urljoin to correctly handle all cases:
+    - relative paths (img.jpg, ../img.jpg)
+    - absolute paths (/img.jpg)
+    - with parameters and fragments.
     """
     @staticmethod
     def join(base_url, relative_url):
         """
-        Формирует полный URL.
-
-        :param base_url: Базовый URL (абсолютный)
-        :param relative_url: Относительная или абсолютная ссылка на картинку
-        :return: Полный абсолютный URL
+        Generates a full URL.
+        :param base_url: Base URL (absolute)
+        :param relative_url: Relative or absolute link to the image
+        :return: Full absolute URL
         """
         return urljoin(base_url, relative_url)
 
     @staticmethod
     def is_absolute(url):
-        """Проверяет, является ли URL абсолютным."""
+        """Checks if the URL is absolute."""
         return bool(urlparse(url).scheme)
 
     @staticmethod
     def normalize(url):
-        """Нормализует URL (убирает лишние слеши и т.д.)."""
+        """Normalizes URLs (removes extra slashes, etc.)."""
         parsed = urlparse(url)
         return parsed._replace(path=parsed.path.rstrip('/')).geturl()

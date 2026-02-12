@@ -11,7 +11,7 @@ from url_helper import UrlParser, UrlJoiner
 class CrawlArchiveWriter:
     def write_meta(self, zip_file: ZipFile, crawl_result: CrawlResult):
         """
-        Метаданные metadata.json
+        Metadata metadata.json
         """
         meta = {
             "url": crawl_result.url,
@@ -81,7 +81,7 @@ class CrawlArchiver:
         self.writer = writer
 
     async def crawl_and_archive_url(self, url: str) -> CrawlArchiverResult:
-        """Обрабатывает один URL и возвращает ZIP buffer."""
+        """Processes a single URL and returns a ZIP buffer."""
         async with AsyncWebCrawler(config=self.config.browser_config) as crawler:
             result: CrawlResult = await crawler.arun(url=url, config=self.config.run_config)
 
@@ -99,7 +99,7 @@ class CrawlArchiver:
         return self.__zip_result_to_buffer(result, media_images)
 
     async def process_urls(self, urls: List[str]) -> List[CrawlArchiverResult]:
-        """Обрабатывает массив URL параллельно."""
+        """Processes an array of URLs in parallel."""
         tasks = [self.crawl_and_archive_url(url) for url in urls]
         return await asyncio.gather(*tasks, return_exceptions=True)
 

@@ -48,13 +48,13 @@ async def serve() -> None:
         DownloaderService(settings), server)
     server.add_insecure_port(f"[::]:{grpc_service_port}")
     await server.start()
-    print(f"Async gRPC-сервер запущен на порту {grpc_service_port}")
+    print(f"Async gRPC server running on port {grpc_service_port}")
 
-    # Graceful shutdown на SIGINT/SIGTERM
+    # Graceful shutdown SIGINT/SIGTERM
     shutdown_event = asyncio.Event()
 
     def signal_handler():
-        print("Получен сигнал завершения.")
+        print("Completion signal received")
         shutdown_event.set()
 
     loop = asyncio.get_running_loop()
@@ -64,9 +64,9 @@ async def serve() -> None:
     try:
         await shutdown_event.wait()
     finally:
-        # Graceful stop с 5-секундным таймаутом
+        # Graceful stop 5-sec timeout
         await server.stop(5)
-        print("Сервер остановлен")
+        print("The server has stopped")
 
 if __name__ == '__main__':
     asyncio.run(serve())
