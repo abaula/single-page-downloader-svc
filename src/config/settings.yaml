@@ -1,0 +1,12 @@
+max_workers: 10
+grpc_service_port: 50001
+browser:
+  headless: true
+  verbose: false
+crawler:
+  cache_mode: "BYPASS"
+  make_local_html: true
+  screenshot: false
+  pdf: false
+  wait_for_images: false
+  verbose: false

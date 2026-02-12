@@ -1,0 +1,7 @@
+crawl4ai>=0.6.0
+grpcio==1.66.1
+grpcio-tools==1.66.1
+playwright>=1.48.0  # Требуется для crawl4ai
+zipfile36  # Для Python 3.10+
+asyncio
+dynaconf[yaml]
