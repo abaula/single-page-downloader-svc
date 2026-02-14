@@ -101,5 +101,5 @@ Usage: Send a `DownloadRequest` with a URL — receive a `DownloadResponse` cont
 
 ## License
 
-GNU GPL 3.0 © 2026
+GNU GPL 3.0 © 2026 \
 Full text: [LICENSE](LICENSE)

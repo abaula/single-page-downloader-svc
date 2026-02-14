@@ -96,5 +96,5 @@ message DownloadResponse {
 
 ## Лицензия
 
-GNU GPL 3.0 © 2026
+GNU GPL 3.0 © 2026 \
 Полный текст: [LICENSE](LICENSE)
