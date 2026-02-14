@@ -1,84 +1,105 @@
-# single-page-downloader-svc
+# Single Page Downloader Service
 
-Microservice for downloading a web page by specified URL with HTML and local resources preservation.
+[Русская версия](README.ru.md)
 
-## Description
+Single Page Downloader Service is a service for downloading individual web pages using web scraping, archiving them into ZIP files, and providing access via a gRPC API. The project allows capturing a page’s content—including its resources—and returning it in a convenient format.
 
-Implemented in Python. Uses **crawl4ai** library for efficient page downloading.
+## Project Purpose
 
-### Functionality
-- Downloads **HTML** of the page unchanged.
-- Creates **local-html** version: saves images to `images` folder, replaces links in HTML with local paths.
-- Returns a ZIP archive with HTML and resources.
+The service is designed for automated downloading and archiving of a single web page into a ZIP archive using Crawl4ai for scraping. It provides a gRPC interface for integration with other systems, simplifying web content processing.
 
-### Interface
-**gRPC**:
-- **Input**: Page URL (string).
-- **Output**: URL + ZIP archive bytes.
+The main goal is to create a template microservice—easily extensible in the future—for tasks involving parsing and offline storage of web pages.
 
-## Installation and Running
+## Configuration (config/settings.yaml)
+
+The `config/settings.yaml` file defines parameters for the service, browser, and crawler. Example configuration:
+
+```yaml
+max_workers: 10                    # Maximum number of parallel workers
+grpc_service_port: 8000            # gRPC service port
+browser:                           # See [Crawl4AI](https://docs.crawl4ai.com/) - BrowserConfig.
+  headless: true                   # Run the browser in headless mode
+  verbose: false                   # Disable verbose browser logs
+crawler:                           # See [Crawl4AI](https://docs.crawl4ai.com/) - CrawlerRunConfig.
+  cache_mode: "BYPASS"             # Cache mode (BYPASS ignores cache)
+  capture_mhtml: true              # Capture MHTML
+  screenshot: false                # Disable screenshots
+  pdf: false                       # Disable PDF capture
+  wait_for_images: true            # Wait for images to load
+  verbose: false                   # Disable verbose crawler logs
+```
+
+The configuration loads at startup and allows tuning of performance, crawling, and browser modes without recompiling the image. If the `config` folder is mounted to the host, changes apply upon service restart.
+
+## Technologies
+
+- **Language**: Python 3.10+
+- **API**: gRPC for high-performance RPC
+- **Web scraping**: Crawl4ai — library for page content extraction
+- **Archiving**: Zipfile — Python standard library for creating ZIP archives
+
+Additionally, standard gRPC libraries (`grpcio`, `grpcio-tools`) and dependencies from `requirements.txt` are used.
+
+## Components Used
+
+- **Crawl4ai** – main tool for parsing HTML, CSS, JS, and page resources
+- **gRPC** – defines the service; proto files generate stubs and server code
+- **Zipfile** – handles content archiving
+- **Docker** – containerization for deployment
+- **PyYAML** – for reading `settings.yaml`
+- Python libraries: see `requirements.txt`
+
+## Using Docker
 
 1. Clone the repository:
-   ```
-   git clone https://github.com/your-username/single-page-downloader-svc.git
-   cd single-page-downloader-svc
-   ```
+   `git clone [https://github.com/abaula/single-page-downloader-svc.git](https://github.com/abaula/single-page-downloader-svc.git) && cd single-page-downloader-svc`
+2. Optionally, configure `config/settings.yaml`
+3. Build the image:
+   `docker build -t single-page-downloader-svc .`
+4. Run the container (with settings mounted from host):
+   `docker run -p 50001:8000 -v $(pwd)/config:/app/config single-page-downloader-svc`
+5. Connect via gRPC to `localhost:50001` (using grpcurl or a client)
 
-2. Install dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
+## Mounting config to host (recommended)
 
-3. Run the service:
-   ```
-   python main.py
-   ```
+To edit configuration without rebuilding the image, use a volume mount:
 
-## Working with Code
-
-1. **Create virtual environment**:
-   ```
-   python -m venv venv
-   # Linux/Mac:
-   source venv/bin/activate
-   # Windows:
-   venv\Scripts\activate
-   ```
-
-2. **Generate Protobuf code**:
-   ```
-   python -m grpc_tools.protoc -I proto --python_out=. --grpc_python_out=. ./proto/page_downloader.proto
-   ```
-
-3. **Install Playwright browsers** (for crawl4ai):
-   ```
-   playwright install chromium
-   ```
-
-## Usage
-
-Example gRPC client (proto file in `proto/`):
+```bash
+docker run -p 50001:8000 \
+  -v $(pwd)/config:/app/config \
+  single-page-downloader-svc
 ```
+
+**Explanation:**
+
+`-v $(pwd)/config:/app/config` mounts the local `config/` folder into `/app/config` inside the container.
+
+Changes to `settings.yaml` apply when restarting the container.
+
+Useful for dev/prod environments without rebuilds.
+
+## gRPC API
+
+The service provides a simple gRPC interface for downloading pages:
+
+```protobuf
 service PageDownloader {
   rpc DownloadPage (DownloadRequest) returns (DownloadResponse);
 }
 
 message DownloadRequest {
-  string url = 1;
+  string url = 1;  // Page URL to download
 }
 
 message DownloadResponse {
-  string original_url = 1;
-  bytes zip_archive = 2;
+  string original_url = 1;   // Original request URL
+  bytes zip_archive = 2;     // ZIP archive containing the page content
 }
 ```
 
-## Technologies
-- Python 3.10+
-- Crawl4ai — for web scraping
-- gRPC — for API
-- Zipfile — for archiving
+Usage: Send a `DownloadRequest` with a URL — receive a `DownloadResponse` containing a ZIP archive of the retrieved resources.
 
 ## License
-GNU GPL 3.0 © 2026  \
+
+GNU GPL 3.0 © 2026
 Full text: [LICENSE](LICENSE)
