@@ -1,0 +1,16 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+.env
+.git
+.gitignore
+README.md
+.dockerignore
+Dockerfile
+src/__pycache__
+src/*/__pycache__
