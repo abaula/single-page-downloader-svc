@@ -15,18 +15,20 @@ Single Page Downloader Service — это сервис для скачивани
 Файл `config/settings.yaml` определяет параметры сервиса, браузера и краулера. Пример конфигурации:
 
 ```yaml
-max_workers: 10                    # Максимальное количество параллельных воркеров
-grpc_service_port: 8000            # Порт gRPC-сервиса
-browser:                           # Смотрите настройки [Crawl4AI](https://docs.crawl4ai.com/) - BrowserConfig.
-  headless: true                   # Запуск браузера в headless-режиме
-  verbose: false                   # Отключить verbose-логи браузера
-crawler:                           # Смотрите настройки [Crawl4AI](https://docs.crawl4ai.com/) - CrawlerRunConfig.
-  cache_mode: "BYPASS"             # Режим кэша (BYPASS игнорирует кэш)
-  capture_mhtml: true              # Захватывать MHTML
-  screenshot: false                # Отключить скриншоты
-  pdf: false                       # Отключить PDF
-  wait_for_images: true            # Ждать загрузки изображений
-  verbose: false                   # Отключить verbose-логи краулера
+max_workers: 10                     # Максимальное количество параллельных воркеров
+grpc:
+  service_port: 8000                # Порт gRPC-сервиса
+  max_send_message_length: 52428800 # Максимальная длинна отправляемого сообщения gRPC - 50Mb
+browser:                            # Смотрите настройки [Crawl4AI](https://docs.crawl4ai.com/) - BrowserConfig.
+  headless: true                    # Запуск браузера в headless-режиме
+  verbose: false                    # Отключить verbose-логи браузера
+crawler:                            # Смотрите настройки [Crawl4AI](https://docs.crawl4ai.com/) - CrawlerRunConfig.
+  cache_mode: "BYPASS"              # Режим кэша (BYPASS игнорирует кэш)
+  capture_mhtml: true               # Захватывать MHTML
+  screenshot: false                 # Отключить скриншоты
+  pdf: false                        # Отключить PDF
+  wait_for_images: true             # Ждать загрузки изображений
+  verbose: false                    # Отключить verbose-логи краулера
 ```
 
 Конфигурация загружается при запуске и позволяет настраивать производительность, режимы краулинга и браузера без перекомпиляции, при условии выноса папки config из контейнера на host, тогда изменения применяются при перезапуске сервиса.
