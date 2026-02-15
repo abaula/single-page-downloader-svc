@@ -15,18 +15,20 @@ The main goal is to create a template microservice—easily extensible in the fu
 The `config/settings.yaml` file defines parameters for the service, browser, and crawler. Example configuration:
 
 ```yaml
-max_workers: 10                    # Maximum number of parallel workers
-grpc_service_port: 8000            # gRPC service port
-browser:                           # See [Crawl4AI](https://docs.crawl4ai.com/) - BrowserConfig.
-  headless: true                   # Run the browser in headless mode
-  verbose: false                   # Disable verbose browser logs
-crawler:                           # See [Crawl4AI](https://docs.crawl4ai.com/) - CrawlerRunConfig.
-  cache_mode: "BYPASS"             # Cache mode (BYPASS ignores cache)
-  capture_mhtml: true              # Capture MHTML
-  screenshot: false                # Disable screenshots
-  pdf: false                       # Disable PDF capture
-  wait_for_images: true            # Wait for images to load
-  verbose: false                   # Disable verbose crawler logs
+max_workers: 10                     # Maximum number of parallel workers
+grpc:
+  service_port: 8000                # gRPC service port
+  max_send_message_length: 52428800 # The maximum length of a gRPC message sent is 50 MB.
+browser:                            # See [Crawl4AI](https://docs.crawl4ai.com/) - BrowserConfig.
+  headless: true                    # Run the browser in headless mode
+  verbose: false                    # Disable verbose browser logs
+crawler:                            # See [Crawl4AI](https://docs.crawl4ai.com/) - CrawlerRunConfig.
+  cache_mode: "BYPASS"              # Cache mode (BYPASS ignores cache)
+  capture_mhtml: true               # Capture MHTML
+  screenshot: false                 # Disable screenshots
+  pdf: false                        # Disable PDF capture
+  wait_for_images: true             # Wait for images to load
+  verbose: false                    # Disable verbose crawler logs
 ```
 
 The configuration loads at startup and allows tuning of performance, crawling, and browser modes without recompiling the image. If the `config` folder is mounted to the host, changes apply upon service restart.

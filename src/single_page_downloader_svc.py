@@ -43,11 +43,12 @@ async def serve() -> None:
         envvar_prefix=APP_ENVVAR_PREFIX,
         settings_files=["config/settings.yaml"]
     )
-    grpc_service_port = settings.grpc_service_port
+    options = [("grpc.max_send_message_length", settings.grpc.max_send_message_length)]
     max_workers = settings.max_workers
-    server = grpc.aio.server(futures.ThreadPoolExecutor(max_workers=max_workers))
+    server = grpc.aio.server(futures.ThreadPoolExecutor(max_workers=max_workers), options=options)
     page_downloader_pb2_grpc.add_PageDownloaderServicer_to_server(
         DownloaderService(settings), server)
+    grpc_service_port = settings.grpc.service_port
     server.add_insecure_port(f"[::]:{grpc_service_port}")
     await server.start()
     print(f"Async gRPC server running on port {grpc_service_port}")

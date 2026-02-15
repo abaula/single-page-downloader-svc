@@ -23,7 +23,7 @@ settings = Dynaconf(
         settings_files=["src/config/settings.yaml"]
     )
 
-grpc_service_port = settings.grpc_service_port
+grpc_service_port = settings.grpc.service_port
 channel = grpc.insecure_channel(f"localhost:{grpc_service_port}")
 stub = page_downloader_pb2_grpc.PageDownloaderStub(channel)
 
