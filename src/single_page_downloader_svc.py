@@ -16,7 +16,7 @@ class DownloaderService(page_downloader_pb2_grpc.PageDownloaderServicer):
         self.settings = settings
         self.archiver = None
 
-    async def DownloadPage(self, request, _) -> page_downloader_pb2.DownloadResponse:
+    async def DownloadPage(self, request: page_downloader_pb2.DownloadRequest, _) -> page_downloader_pb2.DownloadResponse:
         archiver = self.__get_archiver()
         result = await archiver.crawl_and_archive_url(request.url)
         response = page_downloader_pb2.DownloadResponse()
