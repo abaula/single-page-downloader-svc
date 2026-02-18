@@ -2,24 +2,24 @@ import asyncio
 import signal
 import grpc
 from concurrent import futures
-import page_downloader_pb2
-import page_downloader_pb2_grpc
+import proto.page_downloader_pb2 as pb2
+import proto.page_downloader_pb2_grpc as pb2_grpc
 from dynaconf import Dynaconf
 from crawl4ai import BrowserConfig, CacheMode, CrawlerRunConfig
 from crawler import CrawlArchiverConfig, CrawlArchiveWriter, CrawlArchiver
 
 APP_ENVVAR_PREFIX = "APP_CRAWLARCHIVE"
 
-class DownloaderService(page_downloader_pb2_grpc.PageDownloaderServicer):
+class DownloaderService(pb2_grpc.PageDownloaderServicer):
     def __init__(self, settings: Dynaconf):
         super().__init__()
         self.settings = settings
         self.archiver = None
 
-    async def DownloadPage(self, request: page_downloader_pb2.DownloadRequest, _) -> page_downloader_pb2.DownloadResponse:
+    async def DownloadPage(self, request: pb2.DownloadRequest, _) -> pb2.DownloadResponse:
         archiver = self.__get_archiver()
         result = await archiver.crawl_and_archive_url(request.url)
-        response = page_downloader_pb2.DownloadResponse()
+        response = pb2.DownloadResponse()
         response.original_url = result.url
         response.zip_archive = result.zip_buffer
         return response
@@ -62,7 +62,7 @@ async def serve() -> None:
     options = [("grpc.max_send_message_length", settings.grpc.max_send_message_length)]
     max_workers = settings.max_workers
     server = grpc.aio.server(futures.ThreadPoolExecutor(max_workers=max_workers), options=options)
-    page_downloader_pb2_grpc.add_PageDownloaderServicer_to_server(
+    pb2_grpc.add_PageDownloaderServicer_to_server(
         DownloaderService(settings),
         server)
     grpc_service_port = settings.grpc.service_port
