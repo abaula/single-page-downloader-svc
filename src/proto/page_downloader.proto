@@ -2,10 +2,6 @@ syntax = "proto3";
 
 package pagedownloader;
 
-service PageDownloader {
-  rpc DownloadPage (DownloadRequest) returns (DownloadResponse);
-}
-
 enum LoaderType {
   DYNAMIC = 0;  // Loading dynamic content
   STATIC = 1;   // Loading static content
@@ -19,4 +15,8 @@ message DownloadRequest {
 message DownloadResponse {
   string original_url = 1;
   bytes zip_archive = 2;
+}
+
+service PageDownloader {
+  rpc DownloadPage (DownloadRequest) returns (DownloadResponse);
 }

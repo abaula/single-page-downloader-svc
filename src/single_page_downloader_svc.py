@@ -2,11 +2,10 @@ import asyncio
 import signal
 import grpc
 from concurrent import futures
+from page_downloader import LoaderType, PageDownloader, Request
 import proto.page_downloader_pb2 as pb2
 import proto.page_downloader_pb2_grpc as pb2_grpc
 from dynaconf import Dynaconf
-from crawl4ai import BrowserConfig, CacheMode, CrawlerRunConfig
-from crawler import CrawlArchiverConfig, CrawlArchiveWriter, CrawlArchiver
 
 APP_ENVVAR_PREFIX = "APP_CRAWLARCHIVE"
 
@@ -14,45 +13,22 @@ class DownloaderService(pb2_grpc.PageDownloaderServicer):
     def __init__(self, settings: Dynaconf):
         super().__init__()
         self.settings = settings
-        self.archiver = None
+        self.downloader = None
 
     async def DownloadPage(self, request: pb2.DownloadRequest, _) -> pb2.DownloadResponse:
-        archiver = self.__get_archiver()
-        result = await archiver.crawl_and_archive_url(request.url)
-        response = pb2.DownloadResponse()
-        response.original_url = result.url
-        response.zip_archive = result.zip_buffer
+        downloader_request = Request(url=request.url, loader_type=LoaderType(request.loader_type))
+        downloader_result = await self.__get_downloader().download(downloader_request)
+        response = pb2.DownloadResponse(original_url=downloader_result.original_url,
+                                        zip_archive=downloader_result.zip_archive)
         return response
 
-    def __get_archiver(self) -> CrawlArchiver:
-        if not self.archiver:
-            self.archiver = self.__create_archiver()
-        return self.archiver
+    def __get_downloader(self) -> PageDownloader:
+        if not self.downloader:
+            self.downloader = self.__create_downloader()
+        return self.downloader
 
-    def __create_archiver(self) -> CrawlArchiver:
-        zip_content_writer = CrawlArchiveWriter()
-
-        browser_config = BrowserConfig(
-            headless=self.settings.browser.headless,
-            verbose=self.settings.browser.verbose)
-
-        run_config = CrawlerRunConfig(
-            capture_mhtml=self.settings.crawler.capture_mhtml,
-            screenshot=self.settings.crawler.screenshot,
-            pdf=self.settings.crawler.pdf,
-            cache_mode=CacheMode[self.settings.crawler.cache_mode],
-            verbose=self.settings.crawler.verbose,
-            wait_for_images=self.settings.crawler.wait_for_images)
-
-        config = CrawlArchiverConfig(
-            browser_config=browser_config,
-            run_config=run_config)
-
-        archiver = CrawlArchiver(
-            config=config,
-            writer=zip_content_writer)
-
-        return archiver
+    def __create_downloader(self) -> PageDownloader:
+        return PageDownloader(self.settings)
 
 async def serve() -> None:
     settings = Dynaconf(

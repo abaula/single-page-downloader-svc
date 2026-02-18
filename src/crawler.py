@@ -63,7 +63,7 @@ class CrawlArchiver:
         self.config = config
         self.writer = writer
 
-    async def crawl_and_archive_url(self, url: str) -> CrawlArchiverResult:
+    async def download(self, url: str) -> CrawlArchiverResult:
         """Processes a single URL and returns a ZIP buffer."""
         async with AsyncWebCrawler(config=self.config.browser_config) as crawler:
             result: CrawlResult = await crawler.arun(url=url, config=self.config.run_config)
@@ -73,11 +73,6 @@ class CrawlArchiver:
 
         # We write the result into a zip archive.
         return self.__zip_result_to_buffer(result)
-
-    async def process_urls(self, urls: List[str]) -> List[CrawlArchiverResult]:
-        """Processes an array of URLs in parallel."""
-        tasks = [self.crawl_and_archive_url(url) for url in urls]
-        return await asyncio.gather(*tasks, return_exceptions=True)
 
     def __zip_result_to_buffer(self, crawl_result: CrawlResult) -> CrawlArchiverResult:
         buffer = BytesIO()

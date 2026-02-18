@@ -3,8 +3,8 @@ from urllib.parse import urlparse
 import tempfile
 from dynaconf import Dynaconf
 import grpc
-import page_downloader_pb2
-import page_downloader_pb2_grpc
+import proto.page_downloader_pb2 as pb2
+import proto.page_downloader_pb2_grpc as pb2_grpc
 
 def get_archive_file_path(output_dir: Path, url: str) -> Path:
         output_dir.mkdir(exist_ok=True)
@@ -25,10 +25,13 @@ settings = Dynaconf(
 
 grpc_service_port = settings.grpc.service_port
 channel = grpc.insecure_channel(f"localhost:{grpc_service_port}")
-stub = page_downloader_pb2_grpc.PageDownloaderStub(channel)
+stub = pb2_grpc.PageDownloaderStub(channel)
 
 request_url = "https://www.ixbt.com/"
-request = page_downloader_pb2.DownloadRequest(url=request_url)
+request = pb2.DownloadRequest(url=request_url, loader_type=pb2.LoaderType.DYNAMIC)
+#request_url = "https://old.mccme.ru/free-books/matpros/pdf/mp-34.pdf"
+#request = pb2.DownloadRequest(url=request_url, loader_type=pb2.LoaderType.STATIC)
+
 response = stub.DownloadPage(request)
 
 tmp_path = Path(tempfile.gettempdir()) / "CRAWLARCHIVE"
