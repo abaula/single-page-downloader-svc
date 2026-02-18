@@ -84,8 +84,14 @@ service PageDownloader {
   rpc DownloadPage (DownloadRequest) returns (DownloadResponse);
 }
 
+enum LoaderType {
+  DYNAMIC = 0;  // Загрузка динамического контента
+  STATIC = 1;   // Загрузка статического контента
+}
+
 message DownloadRequest {
-  string url = 1;  // URL страницы для скачивания
+  string url = 1;
+  LoaderType loader_type = 2;
 }
 
 message DownloadResponse {

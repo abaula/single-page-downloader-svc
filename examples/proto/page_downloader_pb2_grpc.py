@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import page_downloader_pb2 as page__downloader__pb2
+from proto import page_downloader_pb2 as proto_dot_page__downloader__pb2
 
 GRPC_GENERATED_VERSION = '1.66.1'
 GRPC_VERSION = grpc.__version__
@@ -18,7 +18,7 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in page_downloader_pb2_grpc.py depends on'
+        + f' but the generated code in proto/page_downloader_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
@@ -36,8 +36,8 @@ class PageDownloaderStub(object):
         """
         self.DownloadPage = channel.unary_unary(
                 '/pagedownloader.PageDownloader/DownloadPage',
-                request_serializer=page__downloader__pb2.DownloadRequest.SerializeToString,
-                response_deserializer=page__downloader__pb2.DownloadResponse.FromString,
+                request_serializer=proto_dot_page__downloader__pb2.DownloadRequest.SerializeToString,
+                response_deserializer=proto_dot_page__downloader__pb2.DownloadResponse.FromString,
                 _registered_method=True)
 
 
@@ -55,8 +55,8 @@ def add_PageDownloaderServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'DownloadPage': grpc.unary_unary_rpc_method_handler(
                     servicer.DownloadPage,
-                    request_deserializer=page__downloader__pb2.DownloadRequest.FromString,
-                    response_serializer=page__downloader__pb2.DownloadResponse.SerializeToString,
+                    request_deserializer=proto_dot_page__downloader__pb2.DownloadRequest.FromString,
+                    response_serializer=proto_dot_page__downloader__pb2.DownloadResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -84,8 +84,8 @@ class PageDownloader(object):
             request,
             target,
             '/pagedownloader.PageDownloader/DownloadPage',
-            page__downloader__pb2.DownloadRequest.SerializeToString,
-            page__downloader__pb2.DownloadResponse.FromString,
+            proto_dot_page__downloader__pb2.DownloadRequest.SerializeToString,
+            proto_dot_page__downloader__pb2.DownloadResponse.FromString,
             options,
             channel_credentials,
             insecure,
