@@ -63,12 +63,11 @@ class PageDownloader:
         browser_config = BrowserConfig(
             headless=self.settings.browser.headless,
             verbose=self.settings.browser.verbose,
-            # настройки против утечек ресурсов в headless browser
-            use_persistent_context=False,
+            # Headless Browser resource leak prevention settings
             browser_mode="docker",
-            sleep_on_close=True,
-            viewport={"width": 1280, "height": 720},  # Фиксированный viewport
-            extra_args=["--disable-extensions", "--no-sandbox"]  # Доп. флаги Chrome
+            cdp_cleanup_on_close=True,
+            viewport={"width": 1280, "height": 720},  # fixed viewport
+            extra_args=["--disable-extensions", "--no-sandbox"]  # Additional Chrome flags
             )
 
         run_config = CrawlerRunConfig(
