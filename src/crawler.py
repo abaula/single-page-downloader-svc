@@ -69,7 +69,7 @@ class CrawlArchiver:
             result: CrawlResult = await crawler.arun(url=url, config=self.config.run_config)
 
         # Yield control to complete all async crawler operations
-        await asyncio.sleep(0)
+        await asyncio.sleep(0.1)
 
         # We write the result into a zip archive.
         return self.__zip_result_to_buffer(result)

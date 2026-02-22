@@ -62,7 +62,13 @@ class PageDownloader:
 
         browser_config = BrowserConfig(
             headless=self.settings.browser.headless,
-            verbose=self.settings.browser.verbose)
+            verbose=self.settings.browser.verbose,
+            # Headless Browser resource leak prevention settings
+            browser_mode="docker",
+            cdp_cleanup_on_close=True,
+            viewport={"width": 1280, "height": 720},  # fixed viewport
+            extra_args=["--disable-extensions", "--no-sandbox"]  # Additional Chrome flags
+            )
 
         run_config = CrawlerRunConfig(
             capture_mhtml=self.settings.crawler.capture_mhtml,
