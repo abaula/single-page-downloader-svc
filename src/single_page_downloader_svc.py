@@ -15,10 +15,10 @@ class DownloaderService(pb2_grpc.PageDownloaderServicer):
         self.settings = settings
         self.downloader = None
 
-    async def DownloadPage(self, request: pb2.DownloadRequest, _) -> pb2.DownloadResponse:
+    async def DownloadPage(self, request: pb2.DownloadRequest, _) -> pb2.DownloadResponse: # type: ignore
         downloader_request = Request(url=request.url, loader_type=LoaderType(request.loader_type))
         downloader_result = await self.__get_downloader().download(downloader_request)
-        response = pb2.DownloadResponse(original_url=downloader_result.original_url,
+        response = pb2.DownloadResponse(original_url=downloader_result.original_url, # type: ignore
                                         zip_archive=downloader_result.zip_archive)
         return response
 

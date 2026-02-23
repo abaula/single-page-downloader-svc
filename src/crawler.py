@@ -3,7 +3,6 @@ import json
 from io import BytesIO
 from zipfile import ZipFile, ZIP_DEFLATED
 from base64 import b64decode
-from typing import List
 from crawl4ai import AsyncWebCrawler, BrowserConfig, CrawlResult, CrawlerRunConfig
 
 class CrawlArchiveWriter:
@@ -66,7 +65,7 @@ class CrawlArchiver:
     async def download(self, url: str) -> CrawlArchiverResult:
         """Processes a single URL and returns a ZIP buffer."""
         async with AsyncWebCrawler(config=self.config.browser_config) as crawler:
-            result: CrawlResult = await crawler.arun(url=url, config=self.config.run_config)
+            result: CrawlResult = await crawler.arun(url=url, config=self.config.run_config) # type: ignore
 
         # Yield control to complete all async crawler operations
         await asyncio.sleep(0.1)

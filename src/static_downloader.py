@@ -13,8 +13,11 @@ def json_serializable(obj):
         return str(obj)
     if isinstance(obj, datetime):
         return obj.isoformat()
-    if isinstance(obj, (io.BytesIO, bytes)):
-        return obj.getvalue().decode('utf-8') if hasattr(obj, 'getvalue') else obj.decode('utf-8')
+    if isinstance(obj, io.BytesIO):
+        return obj.getvalue().decode("utf-8")
+    elif isinstance(obj, bytes):
+        return obj.decode("utf-8")
+
     raise TypeError(f"Object of type {type(obj).__name__} is not JSON serializable")
 
 class DownloadResponse:

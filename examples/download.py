@@ -28,7 +28,7 @@ channel = grpc.insecure_channel(f"localhost:{grpc_service_port}")
 stub = pb2_grpc.PageDownloaderStub(channel)
 
 request_url = "https://www.ixbt.com/"
-request = pb2.DownloadRequest(url=request_url, loader_type=pb2.LoaderType.DYNAMIC)
+request = pb2.DownloadRequest(url=request_url, loader_type=pb2.LoaderType.DYNAMIC) # type: ignore
 #request_url = "https://old.mccme.ru/free-books/matpros/pdf/mp-34.pdf"
 #request = pb2.DownloadRequest(url=request_url, loader_type=pb2.LoaderType.STATIC)
 
